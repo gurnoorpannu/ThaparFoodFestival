@@ -24,6 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.thaparfoodfestival.R
 
 @Composable
 fun CustomDrawerApp() {
@@ -182,7 +186,6 @@ fun DrawerContent(
     isOpen: Boolean,
     onClose: () -> Unit
 ) {
-    // The drawer is always full screen in the background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -194,7 +197,7 @@ fun DrawerContent(
                 .fillMaxSize()
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp)
         ) {
-            // Profile Section
+            // Logo Section
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -202,39 +205,15 @@ fun DrawerContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF475569)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-
-                    Column {
-                        Text(
-                            text = "Ashu",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                        Text(
-                            text = "Software Engineer",
-                            color = Color(0xFF94A3B8),
-                            fontSize = 14.sp
-                        )
-                    }
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.tfflogo),
+                    contentDescription = "TFF Logo",
+                    modifier = Modifier
+                        .height(80.dp)  // Increased from 48.dp
+                        .width(200.dp)  // Increased from 120.dp
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Fit
+                )
 
                 if (isOpen) {
                     IconButton(onClick = onClose) {
@@ -263,54 +242,36 @@ fun DrawerContent(
 
             // Navigation items with max width to prevent overlap
             Column(
-                modifier = Modifier.fillMaxWidth(0.7f),
+                modifier = Modifier.fillMaxWidth(0.65f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                DrawerItem(icon = Icons.Default.Home, text = "Home", isSelected = true)
-                DrawerItem(icon = Icons.Default.DateRange, text = "Events", isSelected = false)
-                DrawerItem(icon = Icons.Default.Person, text = "Team", isSelected = false)
-                DrawerItem(icon = Icons.Default.Star, text = "Sponsors", isSelected = false)
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Dark Mode Toggle
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .clip(RoundedCornerShape(12.dp))
-                    .padding(vertical = 12.dp, horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Text(
-                        text = "Dark Mode",
-                        color = Color.White,
-                        fontSize = 16.sp
-                    )
-                }
-
-                Switch(
-                    checked = true,
-                    onCheckedChange = { },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFF3B82F6)
-                    )
+                DrawerItem(
+                    icon = Icons.Default.Home,
+                    text = "Home",
+                    isSelected = true,
+                    onClick = onClose
+                )
+                DrawerItem(
+                    icon = Icons.Default.DateRange,
+                    text = "Events",
+                    isSelected = false,
+                    onClick = onClose
+                )
+                DrawerItem(
+                    icon = Icons.Default.Person,
+                    text = "Team",
+                    isSelected = false,
+                    onClick = onClose
+                )
+                DrawerItem(
+                    icon = Icons.Default.Star,
+                    text = "Sponsors",
+                    isSelected = false,
+                    onClick = onClose
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -319,14 +280,15 @@ fun DrawerContent(
 fun DrawerItem(
     icon: ImageVector,
     text: String,
-    isSelected: Boolean
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(if (isSelected) Color(0xFF3B82F6) else Color.Transparent)
-            .clickable { }
+            .clickable(onClick = onClick)
             .padding(vertical = 14.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
