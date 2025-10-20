@@ -1,9 +1,5 @@
-// MainActivity.kt
-package com.example.customdrawer
+package com.example.thaparfoodfestival
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,7 +23,6 @@ import androidx.compose.ui.zIndex
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import com.example.thaparfoodfestival.R
 
 @Composable
 fun CustomDrawerApp() {
@@ -189,7 +184,7 @@ fun DrawerContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1E293B))
+            .background(Color.Black)
             .zIndex(0f)
     ) {
         Column(
@@ -247,7 +242,7 @@ fun DrawerContent(
             ) {
                 DrawerItem(
                     icon = Icons.Default.Home,
-                    text = "Home",
+                    text = "About us",
                     isSelected = true,
                     onClick = onClose
                 )
@@ -287,7 +282,7 @@ fun DrawerItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(if (isSelected) Color(0xFF3B82F6) else Color.Transparent)
+            .background(if (isSelected) Color.Cyan else Color.Transparent)
             .clickable(onClick = onClick)
             .padding(vertical = 14.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
