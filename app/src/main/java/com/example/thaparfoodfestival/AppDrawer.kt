@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 @Composable
 fun CustomDrawerApp() {
     var isDrawerOpen by remember { mutableStateOf(false) }
+    var currentScreen by remember { mutableStateOf("home") }
 
     Box(
         modifier = Modifier
@@ -35,12 +36,18 @@ fun CustomDrawerApp() {
         // Drawer Background (always behind, full screen)
         DrawerContent(
             isOpen = isDrawerOpen,
-            onClose = { isDrawerOpen = false }
+            currentScreen = currentScreen,
+            onClose = { isDrawerOpen = false },
+            onNavigate = { screen ->
+                currentScreen = screen
+                isDrawerOpen = false
+            }
         )
 
         // Main Content (scales down and moves to right)
         MainContent(
             isDrawerOpen = isDrawerOpen,
+            currentScreen = currentScreen,
             onMenuClick = { isDrawerOpen = true }
         )
     }
@@ -49,6 +56,7 @@ fun CustomDrawerApp() {
 @Composable
 fun MainContent(
     isDrawerOpen: Boolean,
+    currentScreen: String,
     onMenuClick: () -> Unit
 ) {
     // Animate scale, translation, and corner radius
@@ -91,86 +99,9 @@ fun MainContent(
                 .background(Color.White)
                 .clickable(enabled = isDrawerOpen, onClick = {})
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // Top Bar
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(onClick = onMenuClick) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = Color(0xFF1E293B)
-                        )
-                    }
-
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile",
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFE2E8F0))
-                                .padding(6.dp)
-                        )
-                    }
-                }
-
-                // Courses Section
-                Text(
-                    text = "Courses",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-
-                // Course Cards
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    CourseCard(
-                        title = "Animations in SwiftUI",
-                        subtitle = "Build and animate an iOS app from scratch",
-                        duration = "20 SECTIONS - 3 HOURS",
-                        color = Color(0xFF8B5CF6),
-                        badge = "iOS"
-                    )
-
-                    CourseCard(
-                        title = "Build Quality Apps with SwiftUI",
-                        subtitle = "Apply your SwiftUI knowledge",
-                        duration = "47 SECTIONS",
-                        color = Color(0xFF3B82F6),
-                        badge = null
-                    )
-                }
-
-                Text(
-                    text = "Recent",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    RecentCard("State Machine", "Watch video - 15 mins", Color(0xFF93C5FD))
-                    RecentCard("Animated Menu", "Watch video - 10 mins", Color(0xFFA78BFA))
-                }
+            when (currentScreen) {
+                "contact" -> UtilitiesScreen(onMenuClick = onMenuClick)
+                else -> HomeScreen(onMenuClick = onMenuClick)
             }
         }
     }
@@ -179,7 +110,9 @@ fun MainContent(
 @Composable
 fun DrawerContent(
     isOpen: Boolean,
-    onClose: () -> Unit
+    currentScreen: String,
+    onClose: () -> Unit,
+    onNavigate: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -243,26 +176,26 @@ fun DrawerContent(
                 DrawerItem(
                     icon = Icons.Default.Home,
                     text = "About us",
-                    isSelected = true,
-                    onClick = onClose
+                    isSelected = currentScreen == "home",
+                    onClick = { onNavigate("home") }
                 )
                 DrawerItem(
                     icon = Icons.Default.DateRange,
                     text = "Events",
-                    isSelected = false,
-                    onClick = onClose
+                    isSelected = currentScreen == "events",
+                    onClick = { onNavigate("events") }
                 )
                 DrawerItem(
                     icon = Icons.Default.Person,
-                    text = "Team",
-                    isSelected = false,
-                    onClick = onClose
+                    text = "Contact",
+                    isSelected = currentScreen == "contact",
+                    onClick = { onNavigate("contact") }
                 )
                 DrawerItem(
                     icon = Icons.Default.Star,
                     text = "Sponsors",
-                    isSelected = false,
-                    onClick = onClose
+                    isSelected = currentScreen == "sponsors",
+                    onClick = { onNavigate("sponsors") }
                 )
             }
 
@@ -381,6 +314,91 @@ fun RecentCard(title: String, subtitle: String, color: Color) {
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 14.sp
             )
+        }
+    }
+}
+
+@Composable
+fun HomeScreen(onMenuClick: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Top Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onMenuClick) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = Color(0xFF1E293B)
+                )
+            }
+
+            IconButton(onClick = { }) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Profile",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFE2E8F0))
+                        .padding(6.dp)
+                )
+            }
+        }
+
+        // Courses Section
+        Text(
+            text = "Courses",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+        // Course Cards
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CourseCard(
+                title = "Animations in SwiftUI",
+                subtitle = "Build and animate an iOS app from scratch",
+                duration = "20 SECTIONS - 3 HOURS",
+                color = Color(0xFF8B5CF6),
+                badge = "iOS"
+            )
+
+            CourseCard(
+                title = "Build Quality Apps with SwiftUI",
+                subtitle = "Apply your SwiftUI knowledge",
+                duration = "47 SECTIONS",
+                color = Color(0xFF3B82F6),
+                badge = null
+            )
+        }
+
+        Text(
+            text = "Recent",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            RecentCard("State Machine", "Watch video - 15 mins", Color(0xFF93C5FD))
+            RecentCard("Animated Menu", "Watch video - 10 mins", Color(0xFFA78BFA))
         }
     }
 }
