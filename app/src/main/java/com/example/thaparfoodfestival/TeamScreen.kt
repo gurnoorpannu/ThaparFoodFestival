@@ -76,19 +76,19 @@ fun UtilitiesScreen(onMenuClick: () -> Unit = {}) {
     val faqData = listOf(
         FaqItem(
             "How do I register for events?",
-            "Visit the official website or instagram profile of Techniche for all events registrations."
+            "Visit the official website or instagram profile of Thapar FoodFestival for all events registrations."
         ),
         FaqItem(
             "Where can I find the event schedule?",
             "The event schedule is available on our official website and mobile app. You can also check our social media pages for updates."
         ),
         FaqItem(
-            "Is accommodation provided?",
-            "Yes, accommodation can be arranged for outstation participants. Please register early and specify your accommodation requirements."
+            "Can non-Thapar students attend?",
+            "No,event is strictly for Thapar students only."
         ),
         FaqItem(
             "Who do I contact in case of emergency?",
-            "For emergencies, please contact our 24/7 helpline or visit the IITG Hospital. Emergency contacts are available in the Quick Contacts section."
+            "For emergencies, please contact our 24/7 helpline or visit the Hospital."
         )
     )
 
