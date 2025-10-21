@@ -684,23 +684,12 @@ fun SocialLink(
             }
             .padding(12.dp)
     ) {
-        Surface(
-            modifier = Modifier.size(56.dp),
-            shape = CircleShape,
-            color = Color(0xFF2A2A2A)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = iconResource),
-                    contentDescription = label,
-                    modifier = Modifier.size(32.dp),
-                    contentScale = ContentScale.Fit
-                )
-            }
-        }
+        Image(
+            painter = painterResource(id = iconResource),
+            contentDescription = label,
+            modifier = Modifier.size(48.dp), // Increased size since no background circle
+            contentScale = ContentScale.Fit
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
