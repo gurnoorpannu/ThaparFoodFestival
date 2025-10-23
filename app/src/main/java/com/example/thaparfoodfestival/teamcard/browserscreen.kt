@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
@@ -32,12 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
-import com.example.thaparfoodfestival.R
 
-// Define Source Serif font family
-val sourceSerifFontFamily = FontFamily(
-    Font(R.font.source_serrif4, FontWeight.Normal)
-)
+// Using default font family for now
+val sourceSerifFontFamily = FontFamily.Default
 
 @Composable
 fun BrowserWindow(
@@ -50,9 +46,9 @@ fun BrowserWindow(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    // Calculate responsive dimensions - wider and taller
-    val windowWidth = (screenWidth * 0.98f).coerceAtMost(500.dp)
-    val windowHeight = (screenHeight * 0.88f).coerceAtMost(950.dp)
+    // Calculate responsive dimensions - much larger browser window
+    val windowWidth = (screenWidth * 0.95f).coerceAtMost(800.dp)
+    val windowHeight = (screenHeight * 0.92f).coerceAtMost(1200.dp)
 
     Column(
         modifier = modifier
