@@ -1,5 +1,4 @@
 package com.example.thaparfoodfestival.teamcard
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,13 +22,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+import coil.compose.AsyncImage
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.thaparfoodfestival.R
 
-// Caveat font family - using default font for now to avoid R reference issues
-val caveatFont = FontFamily.Default
+// Caveat font family
+val caveatFont = FontFamily(
+    Font(R.font.caveat, FontWeight.Normal)
+)
 
 data class TeamMember(
     val name: String,
@@ -46,149 +48,155 @@ fun TeamCard(
 ) {
     val context = LocalContext.current
 
-    Box(
+    BoxWithConstraints(
         modifier = modifier
-            .width(350.dp)
-            .height(500.dp)
     ) {
-        // Background card frame using teamcard.png
-        Image(
-            painter = painterResource(id = R.drawable.teamcard),
-            contentDescription = "Team Card Background",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
-        )
+        val screenHeight = maxHeight
+        val cardHeight = minOf(screenHeight * 0.35f, 290.dp)
 
-        // Content overlay
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 60.dp, start = 40.dp, end = 40.dp, bottom = 80.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier.height(cardHeight)
         ) {
-            // Photo area (black rounded rectangle)
-            Box(
-                modifier = Modifier
-                    .width(260.dp)
-                    .height(260.dp)
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                if (member.photoResId != null) {
-                    Image(
-                        painter = painterResource(id = member.photoResId),
-                        contentDescription = "${member.name}'s photo",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Default photo",
-                        modifier = Modifier.size(120.dp),
-                        tint = Color.White.copy(alpha = 0.3f)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Name
-            Text(
-                text = member.name,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = caveatFont,
-                textAlign = TextAlign.Center,
-                color = Color.Black
+            // Background card frame (your imported PNG)
+            Image(
+                painter = painterResource(id = R.drawable.teamcard), // Your PNG here
+                contentDescription = "Card frame",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Role
-            Text(
-                text = member.role,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                fontFamily = caveatFont,
-                textAlign = TextAlign.Center,
-                color = Color.Black.copy(alpha = 0.7f)
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Social media icons
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(32.dp),
-                modifier = Modifier.padding(bottom = 16.dp)
+            // Content overlay
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxSize()
             ) {
-                // Instagram icon - using text for now until R reference is fixed
-                IconButton(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(member.instagramUrl))
-                        context.startActivity(intent)
-                    },
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                ) {
-                    Text(
-                        text = "IG",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                }
+                val cardWidth = maxWidth
+                val cardHeight = maxHeight
 
-                // LinkedIn icon - using text for now until R reference is fixed
-                IconButton(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(member.linkedinUrl))
-                        context.startActivity(intent)
-                    },
+                Column(
                     modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
+                        .fillMaxSize()
+                        .padding(
+                            top = cardHeight * 0.14f,
+                            start = cardWidth * 0.16f,
+                            end = cardWidth * 0.12f,
+                            bottom = cardHeight * 0.14f
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // Photo area (black rounded rectangle)
+                    Box(
+                        modifier = Modifier
+                            .padding(top = cardHeight * 0.15f)
+                            .width(cardWidth * 0.60f)
+                            .height(cardHeight * 0.26f)
+                            .clip(RoundedCornerShape(cardWidth * 0.075f))
+                            .background(Color.Black),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (member.photoResId != null) {
+                            Image(
+                                painter = painterResource(id = member.photoResId),
+                                contentDescription = "${member.name}'s photo",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Default photo",
+                                modifier = Modifier.size(cardWidth * 0.75f),
+                                tint = Color.White.copy(alpha = 0.3f)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(cardHeight * 0.01f))
+
+                    // Name
                     Text(
-                        text = "LI",
-                        color = Color.Black,
+                        text = member.name,
+                        fontSize = (cardWidth.value * 0.1f).sp,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
+                        fontFamily = caveatFont,
+                        textAlign = TextAlign.Center,
+                        color = Color.Black
                     )
+
+                    Spacer(modifier = Modifier.height(cardHeight * 0.007f))
+
+                    // Role
+                    Text(
+                        text = member.role,
+                        fontSize = (cardWidth.value * 0.069f).sp,
+                        fontWeight = FontWeight.Normal,
+                        fontFamily = caveatFont,
+                        textAlign = TextAlign.Center,
+                        color = Color.Black.copy(alpha = 0.7f)
+                    )
+
+                    // Add extra spacing before social media icons
+                    Spacer(modifier = Modifier.height(cardHeight * 0.007f))
+
+                    // Social media icons
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(cardWidth * 0.1f),
+                        modifier = Modifier.padding(bottom = cardHeight * 0.03f)
+                    ) {
+                        // Instagram icon
+                        IconButton(
+                            onClick = {
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(member.instagramUrl))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.size(cardWidth * 0.175f)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.instagram),
+                                contentDescription = "Instagram",
+                                modifier = Modifier.size(cardWidth * 0.125f),
+                                tint = Color.Unspecified
+                            )
+                        }
+
+                        // LinkedIn icon
+                        IconButton(
+                            onClick = {
+                                val intent =
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(member.linkedinUrl))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.size(cardWidth * 0.175f)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.linkedin),
+                                contentDescription = "LinkedIn",
+                                modifier = Modifier.size(cardWidth * 0.125f),
+                                tint = Color.Unspecified
+                            )
+                        }
+                    }
                 }
             }
         }
     }
-}
+    @Composable
+    fun TeamCardScreen() {
+        val sampleMember = TeamMember(
+            name = "Arsh Chatrath",
+            role = "Overall Student Co-ordinator",
+            photoResId = R.drawable.arsh, // Your drawable here
+            instagramUrl = "https://instagram.com/username",
+            linkedinUrl = "https://linkedin.com/in/username"
+        )
 
-// Usage example
-@Composable
-fun TeamCardScreen() {
-    val sampleMember = TeamMember(
-        name = "Arsh Chatrath",
-        role = "Overall Student Co-ordinator",
-        photoResId = R.drawable.arsh, // Your drawable here
-        instagramUrl = "https://instagram.com/username",
-        linkedinUrl = "https://linkedin.com/in/username"
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5F5F5)),
-        contentAlignment = Alignment.Center
-    ) {
-        TeamCard(member = sampleMember)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5)),
+            contentAlignment = Alignment.Center
+        ) {
+            TeamCard(member = sampleMember)
+        }
     }
-}
-
-// Preview
-@Preview(showBackground = true)
-@Composable
-fun TeamCardPreview() {
-    TeamCardScreen()
 }

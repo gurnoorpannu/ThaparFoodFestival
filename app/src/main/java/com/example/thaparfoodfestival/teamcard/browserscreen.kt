@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -268,8 +271,7 @@ private fun BrowserContent(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
 
     Box(
         modifier = modifier
@@ -296,26 +298,19 @@ private fun BrowserContent(
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             // Scrollable Content Area
-            Box(
+            Column(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .verticalScroll(scrollState)
+                    .padding(16.dp)
             ) {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    item {
-                        content()
-                    }
-                }
+                content()
             }
 
             // Custom Scrollbar
-            CustomScrollbar(
-                listState = listState,
+            SimpleScrollbar(
+                scrollState = scrollState,
                 modifier = Modifier
                     .width(16.dp)
                     .fillMaxHeight()
@@ -326,35 +321,34 @@ private fun BrowserContent(
 }
 
 @Composable
-private fun CustomScrollbar(
-    listState: LazyListState,
+private fun SimpleScrollbar(
+    scrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
-    val layoutInfo = listState.layoutInfo
-    val viewportHeight = layoutInfo.viewportEndOffset - layoutInfo.viewportStartOffset
-    val totalHeight = layoutInfo.totalItemsCount * (layoutInfo.visibleItemsInfo.firstOrNull()?.size ?: 0)
-
-    // Calculate scrollbar thumb size and position
-    val scrollbarHeight = if (totalHeight > 0) {
-        ((viewportHeight.toFloat() / totalHeight) * viewportHeight).coerceIn(40f, viewportHeight.toFloat())
-    } else {
-        viewportHeight.toFloat()
-    }
-
-    val scrollOffset = if (totalHeight > viewportHeight) {
-        (listState.firstVisibleItemIndex.toFloat() / layoutInfo.totalItemsCount) * viewportHeight +
-                (listState.firstVisibleItemScrollOffset.toFloat() / totalHeight) * viewportHeight
-    } else {
-        0f
-    }
-
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .background(
                 color = Color(0xFF7C0787).copy(alpha = 0.2f),
                 shape = RoundedCornerShape(8.dp)
             )
     ) {
+        val maxScroll = scrollState.maxValue
+        val currentScroll = scrollState.value
+        val viewportHeight = maxHeight.value
+        
+        // Calculate scrollbar thumb size and position
+        val scrollbarHeight = if (maxScroll > 0) {
+            (viewportHeight * 0.3f).coerceAtLeast(40f)
+        } else {
+            viewportHeight
+        }
+
+        val scrollOffset = if (maxScroll > 0) {
+            (currentScroll.toFloat() / maxScroll) * (viewportHeight - scrollbarHeight)
+        } else {
+            0f
+        }
+
         // Scrollbar thumb
         Box(
             modifier = Modifier
